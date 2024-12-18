@@ -110,14 +110,23 @@ const app = express();
 const PORT = process.env.PORT || 5000; // البورت من المتغيرات البيئية أو 5000 افتراضيًا
 
 // إعداد CORS
+const allowedOrigins = [
+  process.env.FRONTEND_URL, // رابط الواجهة الأمامية من .env
+  process.env.NGROK_URL,    // رابط Ngrok من .env
+  process.env.BACKEND_URL,  // رابط الخلفية من .env
+].filter(Boolean); // استبعاد القيم الفارغة
+
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_URL, // رابط الواجهة الأمامية من .env
-      process.env.NGROK_URL, // رابط Ngrok من .env
-      process.env.BACKEND_URL, // رابط الخلفية من .env
-    ].filter(Boolean), // استبعاد القيم الفارغة
-    methods: ["GET", "POST", "DELETE", "PUT"],
+    origin: (origin, callback) => {
+      // السماح بالطلبات بدون Origin (مثل Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Not allowed by CORS for origin: ${origin}`));
+      }
+    },
+    methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
       "Authorization",
@@ -125,7 +134,7 @@ app.use(
       "Expires",
       "Pragma",
     ],
-    credentials: true,
+    credentials: true, // السماح بإرسال ملفات تعريف الارتباط
   })
 );
 
