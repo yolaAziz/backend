@@ -117,7 +117,8 @@ app.use(
     origin: [
       process.env.FRONTEND_URL || "http://localhost:3000",
       process.env.NGROK_URL || "http://localhost:4040",
-      'https://backend-production-404f.up.railway.app'
+      'https://backend-production-404f.up.railway.app',
+      'earnest-renewal-production.up.railway.app'
     ],
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
