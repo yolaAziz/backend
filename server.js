@@ -71,8 +71,6 @@
 
 
 
-
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
@@ -109,17 +107,16 @@ const connectToMongoDB = async () => {
 
 // إعداد التطبيق Express
 const app = express();
-const PORT = process.env.PORT || 5000; // البورت من Heroku أو 5000 محليًا
+const PORT = process.env.PORT || 5000; // البورت من المتغيرات البيئية أو 5000 افتراضيًا
 
 // إعداد CORS
 app.use(
   cors({
     origin: [
-      process.env.FRONTEND_URL || "http://localhost:3000",
-      process.env.NGROK_URL || "http://localhost:4040",
-      'https://backend-production-404f.up.railway.app',
-      'earnest-renewal-production.up.railway.app'
-    ],
+      process.env.FRONTEND_URL, // رابط الواجهة الأمامية من .env
+      process.env.NGROK_URL, // رابط Ngrok من .env
+      process.env.BACKEND_URL, // رابط الخلفية من .env
+    ].filter(Boolean), // استبعاد القيم الفارغة
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
       "Content-Type",
