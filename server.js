@@ -111,7 +111,7 @@ const PORT = process.env.PORT || 5000; // البورت من المتغيرات �
 
 // إعداد CORS
 const allowedOrigins = [
-  process.env.FRONTEND_URL, // رابط الواجهة الأمامية من .env
+  process.env.BACKEND_URL, // رابط الواجهة الأمامية من .env
   process.env.NGROK_URL,    // رابط Ngrok من .env
   process.env.BACKEND_URL,  // رابط الخلفية من .env
 ].filter(Boolean); // استبعاد القيم الفارغة
