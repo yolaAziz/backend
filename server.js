@@ -115,8 +115,8 @@ const PORT = process.env.PORT || 5000; // البورت من Heroku أو 5000 م�
 app.use(
   cors({
     origin: [
-      process.env.FRONTEND_URL,
-      process.env.BACKEND_URL,
+      "https://earnest-renewal-production.up.railway.app", // رابط الواجهة الأمامية
+      "https://backend-production-404f.up.railway.app"   // رابط السيرفر
     ],
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
@@ -129,6 +129,7 @@ app.use(
     credentials: true,
   })
 );
+
 
 app.use(cookieParser());
 app.use(express.json());
