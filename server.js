@@ -115,7 +115,8 @@ const PORT = process.env.PORT || 5000; // البورت من Heroku أو 5000 م�
 app.use(
   cors({
     origin: [
-      process.env.FRONTEND_URL,      
+      process.env.FRONTEND_URL,
+      process.env.BACKEND_URL,
     ],
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: [
