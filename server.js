@@ -70,15 +70,13 @@
 // app.listen(PORT, () => console.log(`Server is now running on port ${PORT}`));
 
 
-
-
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config(); // تحميل متغيرات البيئة
 
+// استيراد الـ Routes
 const authRouter = require("./routes/auth/auth-routes");
 const adminProductsRouter = require("./routes/admin/products-routes");
 const adminOrderRouter = require("./routes/admin/order-routes");
@@ -104,19 +102,15 @@ const connectToMongoDB = async () => {
   }
 };
 
-
 // إعداد التطبيق Express
 const app = express();
-const PORT = process.env.PORT || 5000; // البورت من Heroku أو 5000 محليًا
+const PORT = process.env.PORT || 5000; // البورت من البيئة أو 5000 محليًا
 
 // إعداد CORS
 app.use(
   cors({
-    origin: [
-      "https://earnest-renewal-production.up.railway.app",  // رابط الواجهة الأمامية
-      "https://backend-production-404f.up.railway.app"    // رابط السيرفر (مفترض أنه السيرفر نفسه)
-    ],    
-    methods: ["GET", "POST", "DELETE", "PUT"],
+    origin: "https://earnest-renewal-production.up.railway.app", // رابط الواجهة الأمامية
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
       "Authorization",
@@ -124,11 +118,41 @@ app.use(
       "Expires",
       "Pragma",
     ],
-    credentials: true,
+    credentials: true, // السماح باستخدام الكوكيز
   })
 );
 
+// التعامل مع طلب OPTIONS لجميع المسارات
+app.options("*", (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, Cache-Control, Expires, Pragma"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.status(200).end();
+});
 
+// إعداد Headers ديناميكيًا لجميع الطلبات
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    "https://earnest-renewal-production.up.railway.app",
+  ];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, Cache-Control, Expires, Pragma"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
+// استخدام الـ Middlewares
 app.use(cookieParser());
 app.use(express.json());
 
@@ -147,6 +171,12 @@ app.use("/api/shop/review", shopReviewRouter);
 app.use("/api/paymob", paymobWebhook);
 
 app.use("/api/common/feature", commonFeatureRouter);
+
+// معالجة الأخطاء العامة
+app.use((err, req, res, next) => {
+  console.error("Error:", err.message);
+  res.status(500).json({ message: "Internal server error" });
+});
 
 // إعداد الاستماع للسيرفر
 app.listen(PORT, async () => {
