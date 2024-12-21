@@ -109,7 +109,7 @@ const PORT = process.env.PORT || 5000; // البورت من البيئة أو 50
 // إعداد CORS
 app.use(
   cors({
-    origin: "https://earnest-renewal-production.up.railway.app", // رابط الواجهة الأمامية
+    origin: "https://backend-nine-topaz.vercel.app", // رابط الواجهة الأمامية
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
